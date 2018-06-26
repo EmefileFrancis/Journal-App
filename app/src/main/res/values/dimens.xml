@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="labels_margin_bottom">5dp</dimen>
+    <dimen name="left_padding">10dp</dimen>
+    <dimen name="padding">16dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
+</resources>

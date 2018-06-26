@@ -1,3 +1,13 @@
 <resources>
     <string name="app_name">JournalApp</string>
+    <string name="journal_title_hint">Title</string>
+    <string name="journal_body_hint">Journal</string>
+    <string name="label">Label</string>
+    <string name="inspiration_label">Inspiration</string>
+    <string name="work_label">Work</string>
+    <string name="personal_label">Personal</string>
+    <string name="add_button_text">Add</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="add_journal_label">Add a new Journal</string>
+    <string name="settings_title">Settings</string>
 </resources>

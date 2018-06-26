@@ -1,18 +1,116 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout android:layout_height="match_parent"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.emefilefrancis.journalapp.AddJournalActivity">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:paddingRight="@dimen/padding"
+    android:paddingLeft="@dimen/padding"
+    android:paddingTop="@dimen/padding">
 
-    <TextView
+    <!-- EditText to collect Journal Title -->
+    <EditText
+        android:id="@+id/et_journal_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start"
+        android:textStyle="bold"
+        android:paddingLeft="@dimen/left_padding"
+        android:hint="@string/journal_title_hint" />
+
+    <!-- EditText to collect Journal Body -->
+    <EditText
+        android:id="@+id/et_journal_body"
+        android:layout_width="match_parent"
+        android:layout_height="161dp"
+        android:layout_gravity="start"
+        android:paddingLeft="@dimen/left_padding"
+        android:gravity="start"
+        android:hint="@string/journal_body_hint"
+        android:lines="10"
+        android:textAlignment="textStart" />
+
+    <!-- LinearLayout to hold CheckBoxes for label -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginBottom="@dimen/labels_margin_bottom">
+
+        <!-- CheckBox for Inspiration -->
+        <CheckBox
+            android:id="@+id/cb_inspiration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/inspiration_label"/>
+
+        <!-- CheckBox for Work -->
+        <CheckBox
+            android:id="@+id/cb_work"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/personal_label"/>
+
+        <!-- CheckBox for Personal -->
+        <CheckBox
+            android:id="@+id/cb_personal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/work_label"/>
+
+    </LinearLayout>
+
+    <RadioGroup
+        android:id="@+id/radio_group"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_gravity="start"
+        android:orientation="horizontal"
+        android:layout_marginBottom="10dp"
+        android:weightSum="4">
+
+        <RadioButton
+            android:id="@+id/radioButton1"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@color/materialRed"
+            android:checked="true"
+            android:theme="@style/WhiteRadioButton"/>
+
+        <RadioButton
+            android:id="@+id/radioButton2"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@color/materialGreen"
+            android:theme="@style/WhiteRadioButton"/>
+
+        <RadioButton
+            android:id="@+id/radioButton3"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@color/materialYellow"
+            android:theme="@style/WhiteRadioButton"/>
+
+        <RadioButton
+            android:id="@+id/radioButton4"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@color/materialOrange"
+            android:theme="@style/WhiteRadioButton"/>
+
+    </RadioGroup>
+
+    <!-- Add Button -->
+    <Button
+        android:id="@+id/addButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-</android.support.constraint.ConstraintLayout>
+        android:layout_gravity="center"
+        android:background="@color/colorPrimaryDark"
+        android:text="@string/add_button_text"
+        android:onClick="saveToDB"
+        android:textColor="@android:color/primary_text_dark" />
+</LinearLayout>

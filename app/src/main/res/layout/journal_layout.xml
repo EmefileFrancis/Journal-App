@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:id="@+id/journal_layout_id"
+    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="horizontal"
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp"
+    android:paddingRight="@dimen/left_padding"
+    android:paddingLeft="@dimen/left_padding"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    tools:context="com.emefilefrancis.journalapp.MainActivity">
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_journal_title"
+            style="@style/TextAppearance.AppCompat.Title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/primary_text_light"
+            tools:text="Description"/>
+
+        <TextView
+            android:id="@+id/tv_journal_body_part"
+            style="@style/TextAppearance.AppCompat.Body2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/primary_text_light"
+            tools:text="This is part of the Journal Body..."/>
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_color"
+        style="@style/TextAppearance.AppCompat.Small"
+        android:layout_width="22dp"
+        android:layout_height="22dp"
+        android:layout_gravity="center"
+        android:layout_marginLeft="8dp"
+        android:layout_marginStart="8dp"
+        android:background="@drawable/color_circle"
+        android:gravity="center"
+        android:textAlignment="center"
+        android:textColor="@android:color/primary_text_light"
+        tools:text="R"/>
+
+</LinearLayout>
