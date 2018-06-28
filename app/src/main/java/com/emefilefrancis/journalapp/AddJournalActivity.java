@@ -3,6 +3,9 @@ package com.emefilefrancis.journalapp;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
+
+import android.support.annotation.NonNull;
+
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -18,10 +21,21 @@ import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+
+import com.emefilefrancis.journalapp.com.emefilefrancis.journalapp.models.Journal;
+import com.emefilefrancis.journalapp.com.emefilefrancis.journalapp.models.User;
+
 import com.emefilefrancis.journalapp.database.AddJournalViewModel;
 import com.emefilefrancis.journalapp.database.AddJournalViewModelFactory;
 import com.emefilefrancis.journalapp.database.AppDatabase;
 import com.emefilefrancis.journalapp.database.JournalEntry;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -43,6 +57,11 @@ public class AddJournalActivity extends AppCompatActivity {
     private static final String TAG = AddJournalActivity.class.getSimpleName();
 
     private AppDatabase mDb;
+
+    private FirebaseUser firebaseUser;
+    private DatabaseReference databaseReference;
+    private DatabaseReference journalReference;
+
 
     private EditText etJournalTitle;
     private EditText etJournalBody;
@@ -67,6 +86,14 @@ public class AddJournalActivity extends AppCompatActivity {
         }
 
         mDb = AppDatabase.getOnlyDBInstance(getApplicationContext());
+
+
+        databaseReference = FirebaseDatabase.getInstance().getReference();
+        journalReference = FirebaseDatabase.getInstance().getReference("journals");
+
+        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        Log.d(TAG, "firebaseUser: " + firebaseUser.getEmail());
+
 
         Intent intent = getIntent();
         if(intent != null && intent.hasExtra(EXTRA_JOURNAL_ID)){
@@ -196,6 +223,57 @@ public class AddJournalActivity extends AppCompatActivity {
                 finish();
             }
         });
+
+        //Save to cloud
+        processCloudPersistence(journalEntry);
+    }
+
+    private void processCloudPersistence(JournalEntry journalEntry){
+        if(mJournalId == DEFAULT_JOURNAL_ID){
+            String id = journalReference.push().getKey();
+            journalReference.child(id).setValue(
+                    journalForCloud(
+                            firebaseUser.getEmail(),
+                            journalEntry.getJournalTitle(),
+                            journalEntry.getJournalBody(),
+                            journalEntry.getJournalLabel(),
+                            journalEntry.getJournalColor(),
+                            journalEntry.getUpdatedDate().toString()));
+        }else{
+            //journalReference.child()
+        }
+
+//        databaseReference.child("users").child(firebaseUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                User user = dataSnapshot.getValue(User.class);
+//
+//                if(user == null){
+//                    Log.e(TAG, "onDataChange: User data is null");
+//                    Toast.makeText(AddJournalActivity.this, "onDataChanged: User data is null!", Toast.LENGTH_LONG).show();
+//                    return;
+//                }
+//
+//                saveNewJournalToCloud(user.email, journalEntry.getJournalTitle(),
+//                        journalEntry.getJournalBody(),journalEntry.getJournalLabel(),
+//                        journalEntry.getJournalColor(), journalEntry.getUpdatedDate().toString());
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError databaseError) {
+//                Log.e(TAG, "onCancelled: Failed to read user!");
+//            }
+//        });
+    }
+
+    private Journal journalForCloud(String author,
+                                    String journalTitle,
+                                    String journalBody,
+                                    String journalLabel,
+                                    String journalColor,
+                                    String journalDate){
+        Journal journal = new Journal(author, journalTitle, journalBody, journalLabel, journalColor, journalDate);
+        return journal;
     }
 
     public String getLabelsString(List<String> labels){

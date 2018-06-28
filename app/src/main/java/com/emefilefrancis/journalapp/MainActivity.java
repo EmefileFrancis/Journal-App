@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity implements JournalAdapter.It
                 return false;
             }
 
-            // Called when a user swipes left or right on a ViewHolder
+            // Called when a User swipes left or right on a ViewHolder
             @Override
             public void onSwiped(final RecyclerView.ViewHolder viewHolder, int swipeDir) {
                 // Here is where you'll implement swipe to delete

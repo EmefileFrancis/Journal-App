@@ -35,7 +35,7 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
     private FirebaseAuth mAuth;
     GoogleSignInClient mGoogleSignInClient;
 
-    TextView tvStatus;
+    //TextView tvStatus;
     SignInButton btnSignIn;
 
     @Override
@@ -55,7 +55,7 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
         mGoogleSignInClient = GoogleSignIn.getClient(this, googleSignInOptions);
         mAuth = FirebaseAuth.getInstance();
 
-        tvStatus = findViewById(R.id.tv_status);
+        //tvStatus = findViewById(R.id.tv_status);
         btnSignIn = findViewById(R.id.sing_in_button);
         btnSignIn.setOnClickListener(this);
     }
