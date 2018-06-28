@@ -1,9 +1,12 @@
+
+# Android
+local.properties
+
+# IntelliJ
 *.iml
+.idea/
+
+# Gradle
+build
 .gradle
-/local.properties
-/.idea/workspace.xml
-/.idea/libraries
-.DS_Store
-/build
-/captures
-.externalNativeBuild
+

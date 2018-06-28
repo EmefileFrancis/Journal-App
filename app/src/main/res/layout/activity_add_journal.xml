@@ -1,11 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout android:layout_height="match_parent"
+<ScrollView android:layout_height="match_parent"
     android:layout_width="match_parent"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:paddingRight="@dimen/padding"
     android:paddingLeft="@dimen/padding"
     android:paddingTop="@dimen/padding">
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
 
     <!-- EditText to collect Journal Title -->
     <EditText
@@ -114,3 +119,4 @@
         android:onClick="saveToDB"
         android:textColor="@android:color/primary_text_dark" />
 </LinearLayout>
+</ScrollView>

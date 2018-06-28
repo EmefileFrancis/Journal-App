@@ -1,8 +1,13 @@
 package com.emefilefrancis.journalapp;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
+import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -11,7 +16,10 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.RadioGroup;
+import android.widget.Toast;
 
+import com.emefilefrancis.journalapp.database.AddJournalViewModel;
+import com.emefilefrancis.journalapp.database.AddJournalViewModelFactory;
 import com.emefilefrancis.journalapp.database.AppDatabase;
 import com.emefilefrancis.journalapp.database.JournalEntry;
 
@@ -30,8 +38,9 @@ public class AddJournalActivity extends AppCompatActivity {
     public static final String WORK = "work";
     public static final String PERSONAL = "personal";
 
-    private static final int DEFAULT_TASK_ID = -1;
+    private static final int DEFAULT_JOURNAL_ID = -1;
     public static final String EXTRA_JOURNAL_ID = "extraJournalId";
+    private static final String TAG = AddJournalActivity.class.getSimpleName();
 
     private AppDatabase mDb;
 
@@ -43,7 +52,7 @@ public class AddJournalActivity extends AppCompatActivity {
     private RadioGroup rgColor;
     private Button btnAdd;
 
-    private int mTaskId = DEFAULT_TASK_ID;
+    private int mJournalId = DEFAULT_JOURNAL_ID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +67,59 @@ public class AddJournalActivity extends AppCompatActivity {
         }
 
         mDb = AppDatabase.getOnlyDBInstance(getApplicationContext());
+
+        Intent intent = getIntent();
+        if(intent != null && intent.hasExtra(EXTRA_JOURNAL_ID)){
+            if(mJournalId == DEFAULT_JOURNAL_ID){
+                mJournalId = intent.getIntExtra(EXTRA_JOURNAL_ID, DEFAULT_JOURNAL_ID);
+
+                AddJournalViewModelFactory addJournalViewModelFactory = new AddJournalViewModelFactory(mDb, mJournalId);
+                final AddJournalViewModel addJournalViewModel = ViewModelProviders
+                        .of(this, addJournalViewModelFactory)
+                        .get(AddJournalViewModel.class);
+                addJournalViewModel.getJournalEntry().observe(this, new Observer<JournalEntry>() {
+                    @Override
+                    public void onChanged(@Nullable JournalEntry journalEntry) {
+                        addJournalViewModel.getJournalEntry().removeObserver(this);
+                        populateUI(journalEntry);
+                    }
+                });
+            }
+        }
+    }
+
+    private void populateUI(JournalEntry journalEntry) {
+        if(journalEntry == null){
+            return;
+        }
+        etJournalTitle.setText(journalEntry.getJournalTitle());
+        etJournalBody.setText(journalEntry.getJournalBody());
+        String labelString = getLabelsStringFromDB(journalEntry);
+        Log.i(TAG, "This is labelString: " + labelString);
+        setLabelView(labelString);
+        setColorView(journalEntry.getJournalColor());
+    }
+
+    private void setColorView(String journalColor) {
+        switch (journalColor){
+            case RED:
+                rgColor.check(R.id.radioButton1);
+                break;
+            case GREEN:
+                rgColor.check(R.id.radioButton2);
+                break;
+            case YELLOW:
+                rgColor.check(R.id.radioButton3);
+                break;
+            case ORANGE:
+                rgColor.check(R.id.radioButton4);
+                break;
+        }
+    }
+
+    private String getLabelsStringFromDB(JournalEntry journalEntry) {
+        String labelString = journalEntry.getJournalLabel();
+        return labelString;
     }
 
     @Override
@@ -69,7 +131,35 @@ public class AddJournalActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        if(checkIfJournalBodyIsEmpty()){
+            return super.onOptionsItemSelected(item);
+        }
+        switch(item.getItemId()){
+            case android.R.id.home:
+                Toast.makeText(this, "Journal Saved", Toast.LENGTH_LONG).show();
+                saveToDB();
+                break;
+        }
         return super.onOptionsItemSelected(item);
+    }
+
+    private boolean checkIfJournalBodyIsEmpty() {
+        if(etJournalBody.getText().toString().equals("")){
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void onBackPressed() {
+
+        if(checkIfJournalBodyIsEmpty()){
+            super.onBackPressed();
+            return;
+        }
+        saveToDB();
+        Toast.makeText(this, "Journal Saved", Toast.LENGTH_LONG).show();
+        super.onBackPressed();
     }
 
     private void initViews() {
@@ -82,10 +172,11 @@ public class AddJournalActivity extends AppCompatActivity {
         btnAdd = findViewById(R.id.addButton);
     }
 
-    public void saveToDB(View view) {
+    public void saveToDB() {
         String title = etJournalTitle.getText().toString();
         String body = etJournalBody.getText().toString();
         List<String> labels = getSelectedLabelsFromViews();
+        Log.i(TAG, "labels: " + labels);
         String color = getColorFromViews();
         Date updatedDate = new Date();
 
@@ -94,11 +185,13 @@ public class AddJournalActivity extends AppCompatActivity {
             @Override
             public void run() {
                 //add new Journal to the DB
-                if(mTaskId == DEFAULT_TASK_ID){
+                if(mJournalId == DEFAULT_JOURNAL_ID){
                     mDb.journalDao().insertJournal(journalEntry);
+                    Log.d(TAG, "Saved new journal to DB");
                 }else{
-                    journalEntry.setId(mTaskId);
+                    journalEntry.setId(mJournalId);
                     mDb.journalDao().updateJournal(journalEntry);
+                    Log.d(TAG, "Updated a journal");
                 }
                 finish();
             }
@@ -107,10 +200,18 @@ public class AddJournalActivity extends AppCompatActivity {
 
     public String getLabelsString(List<String> labels){
         String labelsString = "";
-        for(int i=0; i<labels.size(); i++){
-            labelsString =  labelsString + "|" + labels.get(i);
+        if(labels.size() == 1){
+            labelsString = labels.get(0);
+            return labelsString;
+        }else if(labels.size() == 0){
+            return labelsString;
+        }else if(labels.size() > 1){
+            for(int i=0; i<labels.size(); i++) {
+                labelsString = labelsString + "|" + labels.get(i);
+            }
         }
-        return labelsString;
+        String newString = labelsString.substring(1);
+        return newString;
     }
 
 
@@ -119,9 +220,11 @@ public class AddJournalActivity extends AppCompatActivity {
 
         if(cbInspiration.isChecked()){
             labels.add(INSPIRATION);
-        }else if(cbPersonal.isChecked()){
+        }
+        if(cbPersonal.isChecked()){
             labels.add(PERSONAL);
-        }else if(cbWork.isChecked()){
+        }
+        if(cbWork.isChecked()){
             labels.add(WORK);
         }
         return labels;
@@ -144,5 +247,42 @@ public class AddJournalActivity extends AppCompatActivity {
                 color = ORANGE;
         }
         return color;
+    }
+
+    public void setLabelView(String labelString) {
+
+        if(labelString.equals("")){
+            return;
+        }
+        if(labelString.contains("|")){
+            Log.i(TAG, "labelString contains |");
+            String[] labels = labelString.split("\\|");
+            Log.i(TAG, "This is labels array " + labels);
+            for(int i=0; i<labels.length; i++){
+                switch(labels[i]){
+                    case INSPIRATION:
+                        cbInspiration.setChecked(true);
+                        break;
+                    case WORK:
+                        cbWork.setChecked(true);
+                        break;
+                    case PERSONAL:
+                        cbPersonal.setChecked(true);
+                        break;
+                }
+            }
+            return;
+        }
+        switch (labelString){
+            case INSPIRATION:
+                cbInspiration.setChecked(true);
+                break;
+            case WORK:
+                cbWork.setChecked(true);
+                break;
+            case PERSONAL:
+                cbPersonal.setChecked(true);
+                break;
+        }
     }
 }

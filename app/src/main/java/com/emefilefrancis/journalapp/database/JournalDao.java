@@ -1,5 +1,6 @@
 package com.emefilefrancis.journalapp.database;
 
+import android.arch.lifecycle.LiveData;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
@@ -16,7 +17,7 @@ import java.util.List;
 public interface JournalDao {
 
     @Query("SELECT * FROM journal ORDER BY journal_label")
-    List<JournalEntry> loadAllJournals();
+    LiveData<List<JournalEntry>> loadAllJournals();
 
     @Insert
     void insertJournal(JournalEntry journalEntry);
@@ -28,5 +29,5 @@ public interface JournalDao {
     void updateJournal(JournalEntry journalEntry);
 
     @Query("SELECT * FROM journal WHERE id = :id")
-    JournalEntry loadJournalEntryById(int id);
+    LiveData<JournalEntry> loadJournalEntryById(int id);
 }

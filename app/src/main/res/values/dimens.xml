@@ -4,4 +4,6 @@
     <dimen name="left_padding">10dp</dimen>
     <dimen name="padding">16dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
+    <dimen name="marginBottom">10dp</dimen>
+    <dimen name="button_margin_bottom">25dp</dimen>
 </resources>

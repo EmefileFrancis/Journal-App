@@ -1,6 +1,9 @@
 package com.emefilefrancis.journalapp;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -8,6 +11,7 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -15,6 +19,7 @@ import android.view.View;
 
 import com.emefilefrancis.journalapp.database.AppDatabase;
 import com.emefilefrancis.journalapp.database.JournalEntry;
+import com.emefilefrancis.journalapp.database.MainViewModel;
 
 import java.util.List;
 
@@ -22,6 +27,7 @@ import static android.support.v7.widget.DividerItemDecoration.VERTICAL;
 
 public class MainActivity extends AppCompatActivity implements JournalAdapter.ItemClickListener {
 
+    private static final String TAG = MainActivity.class.getSimpleName();
     private RecyclerView mRecycleView;
     private JournalAdapter mJournalAdapter;
 
@@ -57,7 +63,6 @@ public class MainActivity extends AppCompatActivity implements JournalAdapter.It
                         int position = viewHolder.getAdapterPosition();
                         List<JournalEntry> journalEntries = mJournalAdapter.getJournalEntries();
                         mDB.journalDao().deleteJournal(journalEntries.get(position));
-                        retrieveJournalEntries();
                     }
                 });
             }
@@ -73,22 +78,31 @@ public class MainActivity extends AppCompatActivity implements JournalAdapter.It
             }
         });
         mDB = AppDatabase.getOnlyDBInstance(getApplicationContext());
+        setupViewModel();
     }
 
-    private void retrieveJournalEntries() {
-        AppExecutors.getOnlyExecInstance().getDiskIO().execute(new Runnable() {
+    private void setupViewModel() {
+        MainViewModel mainViewModel = ViewModelProviders.of(this).get(MainViewModel.class);
+        mainViewModel.getJournals().observe(this, new Observer<List<JournalEntry>>() {
             @Override
-            public void run() {
-                final List<JournalEntry> journalEntries = mDB.journalDao().loadAllJournals();
-                runOnUiThread(new Runnable(){
-
-                    @Override
-                    public void run() {
-                        mJournalAdapter.setJournalEntries(journalEntries);
-                    }
-                });
+            public void onChanged(@Nullable List<JournalEntry> journalEntries) {
+                Log.d(TAG, "Updating list from LiveData/ViewModel");
+                mJournalAdapter.setJournalEntries(journalEntries);
             }
         });
+//        AppExecutors.getOnlyExecInstance().getDiskIO().execute(new Runnable() {
+//            @Override
+//            public void run() {
+//                final List<JournalEntry> journalEntries = mDB.journalDao().loadAllJournals();
+//                runOnUiThread(new Runnable(){
+//
+//                    @Override
+//                    public void run() {
+//                        mJournalAdapter.setJournalEntries(journalEntries);
+//                    }
+//                });
+//            }
+//        });
     }
 
     @Override
@@ -110,9 +124,9 @@ public class MainActivity extends AppCompatActivity implements JournalAdapter.It
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        retrieveJournalEntries();
-    }
+//    @Override
+//    protected void onResume() {
+//        super.onResume();
+//        retrieveJournalEntries();
+//    }
 }
