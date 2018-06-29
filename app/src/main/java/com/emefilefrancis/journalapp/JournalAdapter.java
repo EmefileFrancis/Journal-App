@@ -3,6 +3,7 @@ package com.emefilefrancis.journalapp;
 import android.content.Context;
 import android.graphics.drawable.GradientDrawable;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -24,6 +25,7 @@ public class JournalAdapter extends RecyclerView.Adapter<JournalAdapter.JournalV
     private Context mContext;
     private List<JournalEntry> journalEntries;
 
+
     public JournalAdapter(Context context, ItemClickListener listener){
         itemClickListener = listener;
         mContext = context;
@@ -41,11 +43,21 @@ public class JournalAdapter extends RecyclerView.Adapter<JournalAdapter.JournalV
         JournalEntry journalEntry = journalEntries.get(position);
 
         holder.tvJournalTitle.setText(journalEntry.getJournalTitle());
-        holder.tvJournalBodyPart.setText(journalEntry.getJournalBody());
-
-        GradientDrawable colorCircle = (GradientDrawable) holder.tvColor.getBackground();
+        String journalBody = journalEntry.getJournalBody();
+        holder.tvJournalBodyPart.setText(getMaxDisplayJournalBody(journalBody));
+        holder.tvLabel.setText(journalEntry.getJournalLabel());
         int colorInt = getColorForColorCircle(journalEntry.getJournalColor());
-        colorCircle.setColor(colorInt);
+        holder.clViewholder.setBackgroundColor(colorInt);
+    }
+
+    public String getMaxDisplayJournalBody(String journalBody){
+        String subJournalBody = "";
+        if(journalBody.length() >= 500){
+            subJournalBody = journalBody.substring(0, 450);
+        }else{
+            subJournalBody = journalBody;
+        }
+        return subJournalBody;
     }
 
     @Override
@@ -70,31 +82,45 @@ public class JournalAdapter extends RecyclerView.Adapter<JournalAdapter.JournalV
     private int getColorForColorCircle(String color){
         int colorInt = 0;
 
-        if(color.equals("red")){
-            colorInt = ContextCompat.getColor(mContext, R.color.materialRed);
-        }else if(color.equals("green")){
-            colorInt = ContextCompat.getColor(mContext, R.color.materialGreen);
-        }else if(color.equals("yellow")){
-            colorInt = ContextCompat.getColor(mContext, R.color.materialYellow);
-        }else if(color.equals("orange")){
+        if (color.equals("orange")) {
             colorInt = ContextCompat.getColor(mContext, R.color.materialOrange);
+        } else if (color.equals("blue")) {
+            colorInt = ContextCompat.getColor(mContext, R.color.materialBlue);
+        } else if (color.equals("lemon")) {
+            colorInt = ContextCompat.getColor(mContext, R.color.materialLemon);
+        } else if (color.equals("yellow")) {
+            colorInt = ContextCompat.getColor(mContext, R.color.materialYellow);
+        } else if (color.equals("pink")) {
+            colorInt = ContextCompat.getColor(mContext, R.color.materialPink);
+        } else if (color.equals("purple")) {
+            colorInt = ContextCompat.getColor(mContext, R.color.materialPurple);
+        } else if (color.equals("dark_blue")) {
+            colorInt = ContextCompat.getColor(mContext, R.color.materialDarkBlue);
+        } else if (color.equals("light_blue")) {
+            colorInt = ContextCompat.getColor(mContext, R.color.materialLightBlue);
+        } else if (color.equals("white")) {
+            colorInt = ContextCompat.getColor(mContext, R.color.white);
         }
+
 
         return colorInt;
     }
 
     class JournalViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
+        ConstraintLayout clViewholder;
         TextView tvJournalTitle;
         TextView tvJournalBodyPart;
-        TextView tvColor;
+        TextView tvLabel;
+
 
         public JournalViewHolder(View itemView) {
             super(itemView);
 
+            clViewholder = itemView.findViewById(R.id.vh_constraint_layout);
             tvJournalTitle = itemView.findViewById(R.id.tv_journal_title);
             tvJournalBodyPart = itemView.findViewById(R.id.tv_journal_body_part);
-            tvColor = itemView.findViewById(R.id.tv_color);
+            tvLabel = itemView.findViewById(R.id.label_text);
             itemView.setOnClickListener(this);
         }
 

@@ -8,11 +8,13 @@
     <string name="personal_label">Personal</string>
     <string name="add_button_text">Add</string>
     <string name="title_activity_main">MainActivity</string>
-    <string name="add_journal_label">Add a new Journal</string>
+    <string name="add_journal_label">Add</string>
     <string name="settings_title">Settings</string>
     <string name="title_activity_sign_in">SignInActivity</string>
     <string name="web_client_id">1065876959406-a8rps7lm4lgdhg2gtr35nurscqt6ijn6.apps.googleusercontent.com</string>
     <string name="email_hint">Email</string>
     <string name="password_hint">Password</string>
     <string name="sign_in">Sign in</string>
+    <string name="reminder">Reminder</string>
+    <string name="edit">Edit</string>
 </resources>

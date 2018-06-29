@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item android:id="@+id/edit_journal_menu"
+        android:icon="@drawable/ic_if_15_pencil_290135"
+        android:title="@string/edit"
+        app:showAsAction="always"
+        android:orderInCategory="1"/>
+
+    <item android:id="@+id/reminder_menu"
+        android:icon="@drawable/ic_if_alarm_clock_171279"
+        android:title="@string/reminder"
+        app:showAsAction="always"
+        android:orderInCategory="2"/>
+
+
+</menu>

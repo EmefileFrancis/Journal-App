@@ -43,10 +43,16 @@ import java.util.List;
 
 public class AddJournalActivity extends AppCompatActivity {
 
-    public static final String RED = "red";
-    public static final String GREEN = "green";
-    public static final String YELLOW = "yellow";
     public static final String ORANGE = "orange";
+    public static final String BLUE = "blue";
+    public static final String LEMON = "lemon";
+    public static final String YELLOW = "yellow";
+    public static final String PINK = "pink";
+    public static final String PURPLE = "purple";
+    public static final String DARK_BLUE = "dark_blue";
+    public static final String LIGHT_BLUE = "light_blue";
+    private static final String WHITE = "white";
+
 
     public static final String INSPIRATION = "inspiration";
     public static final String WORK = "work";
@@ -98,6 +104,7 @@ public class AddJournalActivity extends AppCompatActivity {
         Intent intent = getIntent();
         if(intent != null && intent.hasExtra(EXTRA_JOURNAL_ID)){
             if(mJournalId == DEFAULT_JOURNAL_ID){
+                disableEdit();
                 mJournalId = intent.getIntExtra(EXTRA_JOURNAL_ID, DEFAULT_JOURNAL_ID);
 
                 AddJournalViewModelFactory addJournalViewModelFactory = new AddJournalViewModelFactory(mDb, mJournalId);
@@ -115,6 +122,34 @@ public class AddJournalActivity extends AppCompatActivity {
         }
     }
 
+    public void disableEdit(){
+        etJournalTitle.setFocusable(false);
+        etJournalTitle.setClickable(true);
+        etJournalTitle.setFocusableInTouchMode(false);
+        etJournalBody.setFocusable(false);
+        etJournalBody.setFocusableInTouchMode(false);
+        etJournalBody.setClickable(true);
+    }
+
+    /*public void enableEdit(View view) {
+        Toast.makeText(this, "Clicked", Toast.LENGTH_LONG).show();
+        etJournalTitle.setFocusable(true);
+        etJournalTitle.setFocusableInTouchMode(true);
+        etJournalTitle.setClickable(true);
+        etJournalBody.setFocusable(true);
+        etJournalBody.setFocusableInTouchMode(true);
+        etJournalBody.setClickable(true);
+    }*/
+
+    private void enableEditByPen(){
+        etJournalTitle.setFocusable(true);
+        etJournalTitle.setFocusableInTouchMode(true);
+        etJournalTitle.setClickable(true);
+        etJournalBody.setFocusable(true);
+        etJournalBody.setFocusableInTouchMode(true);
+        etJournalBody.setClickable(true);
+    }
+
     private void populateUI(JournalEntry journalEntry) {
         if(journalEntry == null){
             return;
@@ -128,19 +163,35 @@ public class AddJournalActivity extends AppCompatActivity {
     }
 
     private void setColorView(String journalColor) {
+
         switch (journalColor){
-            case RED:
+            case ORANGE:
                 rgColor.check(R.id.radioButton1);
                 break;
-            case GREEN:
+            case BLUE:
                 rgColor.check(R.id.radioButton2);
                 break;
-            case YELLOW:
+            case LEMON:
                 rgColor.check(R.id.radioButton3);
                 break;
-            case ORANGE:
+            case YELLOW:
                 rgColor.check(R.id.radioButton4);
                 break;
+            case PINK:
+                rgColor.check(R.id.radioButton5);
+                break;
+            case PURPLE:
+                rgColor.check(R.id.radioButton6);
+                break;
+            case DARK_BLUE:
+                rgColor.check(R.id.radioButton7);
+                break;
+            case LIGHT_BLUE:
+                rgColor.check(R.id.radioButton8);
+                break;
+            case WHITE:
+                break;
+
         }
     }
 
@@ -153,6 +204,7 @@ public class AddJournalActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu, menu);
+        inflater.inflate(R.menu.edit_journal_menu, menu);
         return true;
     }
 
@@ -165,6 +217,13 @@ public class AddJournalActivity extends AppCompatActivity {
             case android.R.id.home:
                 Toast.makeText(this, "Journal Saved", Toast.LENGTH_LONG).show();
                 saveToDB();
+                break;
+            case R.id.reminder_menu:
+                Toast.makeText(this, "Reminder Clicked", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.edit_journal_menu:
+                Toast.makeText(this, "Edit Clicked", Toast.LENGTH_SHORT).show();
+                enableEditByPen();
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -196,7 +255,6 @@ public class AddJournalActivity extends AppCompatActivity {
         cbWork = findViewById(R.id.cb_work);
         cbPersonal = findViewById(R.id.cb_personal);
         rgColor = findViewById(R.id.radio_group);
-        btnAdd = findViewById(R.id.addButton);
     }
 
     public void saveToDB() {
@@ -309,20 +367,36 @@ public class AddJournalActivity extends AppCompatActivity {
     }
 
     public String getColorFromViews(){
-        String color = null;
+        String color = "";
         int checkedId = rgColor.getCheckedRadioButtonId();
+
         switch(checkedId){
             case R.id.radioButton1:
-                color = RED;
+                color = ORANGE;
                 break;
             case R.id.radioButton2:
-                color = GREEN;
+                color = BLUE;
                 break;
             case R.id.radioButton3:
-                color = YELLOW;
+                color = LEMON;
                 break;
             case R.id.radioButton4:
-                color = ORANGE;
+                color = YELLOW;
+                break;
+            case R.id.radioButton5:
+                color = PINK;
+                break;
+            case R.id.radioButton6:
+                color = PURPLE;
+                break;
+            case R.id.radioButton7:
+                color = DARK_BLUE;
+                break;
+            case R.id.radioButton8:
+                color = LIGHT_BLUE;
+                break;
+            default:
+                color = WHITE;
         }
         return color;
     }
@@ -363,4 +437,6 @@ public class AddJournalActivity extends AppCompatActivity {
                 break;
         }
     }
+
+
 }

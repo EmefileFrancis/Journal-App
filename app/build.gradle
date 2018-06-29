@@ -16,6 +16,8 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    android.defaultConfig.vectorDrawables.useSupportLibrary = true;
+    dataBinding.enabled = true;
 }
 
 dependencies {

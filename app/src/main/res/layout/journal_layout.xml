@@ -1,53 +1,60 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    android:id="@+id/journal_layout_id"
+<android.support.constraint.ConstraintLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/vh_constraint_layout"
     android:layout_height="wrap_content"
     android:layout_width="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="horizontal"
-    android:paddingTop="8dp"
-    android:paddingBottom="8dp"
-    android:paddingRight="@dimen/left_padding"
-    android:paddingLeft="@dimen/left_padding"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    tools:context="com.emefilefrancis.journalapp.MainActivity">
-
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/tv_journal_title"
-            style="@style/TextAppearance.AppCompat.Title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@android:color/primary_text_light"
-            tools:text="Description"/>
-
-        <TextView
-            android:id="@+id/tv_journal_body_part"
-            style="@style/TextAppearance.AppCompat.Body2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@android:color/primary_text_light"
-            tools:text="This is part of the Journal Body..."/>
-
-    </LinearLayout>
+    android:paddingBottom="@dimen/eight_dp"
+    android:layout_marginBottom="@dimen/eight_dp"
+    android:maxHeight="@dimen/max_height_for_view_holder"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
     <TextView
-        android:id="@+id/tv_color"
-        style="@style/TextAppearance.AppCompat.Small"
-        android:layout_width="22dp"
-        android:layout_height="22dp"
-        android:layout_gravity="center"
-        android:layout_marginLeft="8dp"
-        android:layout_marginStart="8dp"
-        android:background="@drawable/color_circle"
-        android:gravity="center"
-        android:textAlignment="center"
-        android:textColor="@android:color/primary_text_light"
-        tools:text="R"/>
+        android:id="@+id/tv_journal_title"
+        tools:text="Journal title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/eight_dp"
+        android:layout_marginLeft="@dimen/eight_dp"
+        android:layout_marginTop="@dimen/eight_dp"
+        style="@style/TextAppearance.AppCompat.Title"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-</LinearLayout>
+    <TextView
+        android:id="@+id/tv_journal_body_part"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:text="Journal body is inside here"
+        android:layout_marginStart="@dimen/sixteen_dp"
+        android:layout_marginLeft="@dimen/sixteen_dp"
+        android:layout_marginTop="@dimen/eight_dp"
+        app:layout_constraintStart_toStartOf="@+id/tv_journal_title"
+        app:layout_constraintTop_toBottomOf="@+id/tv_journal_title"
+        style="@style/Base.TextAppearance.AppCompat.Body2"
+        android:textColor="#000000"/>
+
+    <ImageView
+        android:id="@+id/label_icon"
+        android:layout_width="15dp"
+        android:layout_height="15dp"
+        android:layout_marginStart="0dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginTop="@dimen/eight_dp"
+        app:layout_constraintStart_toStartOf="@+id/tv_journal_body_part"
+        app:layout_constraintTop_toBottomOf="@+id/tv_journal_body_part"
+        app:srcCompat="@drawable/ic_if_common_tag_2_general_price_glyph_763276"
+        />
+
+    <TextView
+        android:id="@+id/label_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/eight_dp"
+        android:layout_marginLeft="@dimen/eight_dp"
+        android:layout_marginTop="@dimen/eight_dp"
+        tools:text="inspiration|work|personal"
+        android:textSize="10sp"
+        app:layout_constraintStart_toEndOf="@+id/label_icon"
+        app:layout_constraintTop_toBottomOf="@+id/tv_journal_body_part" />
+
+</android.support.constraint.ConstraintLayout>

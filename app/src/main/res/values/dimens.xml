@@ -3,7 +3,11 @@
     <dimen name="labels_margin_bottom">5dp</dimen>
     <dimen name="left_padding">10dp</dimen>
     <dimen name="padding">16dp</dimen>
+    <dimen name="margin">16dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="marginBottom">10dp</dimen>
     <dimen name="button_margin_bottom">25dp</dimen>
+    <dimen name="max_height_for_view_holder">300dp</dimen>
+    <dimen name="eight_dp">8dp</dimen>
+    <dimen name="sixteen_dp">16dp</dimen>
 </resources>

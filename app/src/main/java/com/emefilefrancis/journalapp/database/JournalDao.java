@@ -16,7 +16,7 @@ import java.util.List;
 @Dao
 public interface JournalDao {
 
-    @Query("SELECT * FROM journal ORDER BY journal_label")
+    @Query("SELECT * FROM journal ORDER BY id DESC")
     LiveData<List<JournalEntry>> loadAllJournals();
 
     @Insert

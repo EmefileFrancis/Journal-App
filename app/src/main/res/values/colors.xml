@@ -7,8 +7,14 @@
     <color name="colorPrimaryLight">#C5CAE9</color>
 
     <!-- colors for labels selection -->
-    <color name="materialRed">#E74C3C</color>
-    <color name="materialOrange">#E67E22</color>
-    <color name="materialYellow">#F1C40F</color>
-    <color name="materialGreen">#00ffab</color>
+    <color name="materialOrange">#FF8A80</color>
+    <color name="materialYellow">#FFD180</color>
+    <color name="materialLemon">#CCFF90</color>
+    <color name="materialBlue">#A7FFEB</color>
+    <color name="materialPink">#F8BBD0</color>
+    <color name="materialPurple">#B388FF</color>
+    <color name="materialDarkBlue">#82B1FF</color>
+    <color name="materialLightBlue">#80D8FF</color>
+    <color name="white">#ffffff</color>
+
 </resources>
