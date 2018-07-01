@@ -1,5 +1,6 @@
 package com.emefilefrancis.journalapp;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -34,9 +35,11 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
 
     private FirebaseAuth mAuth;
     GoogleSignInClient mGoogleSignInClient;
+    ProgressDialog mProgressDialog;
 
     //TextView tvStatus;
     SignInButton btnSignIn;
+    FirebaseUser firebaseUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +54,10 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
                 .enableAutoManage(this, this)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, googleSignInOptions)
                 .build();*/
+
+        mProgressDialog = new ProgressDialog(this);
+        mProgressDialog.setTitle(R.string.sign_in_pb_title);
+        mProgressDialog.setMessage(getString(R.string.sign_in_pb_msg));
 
         mGoogleSignInClient = GoogleSignIn.getClient(this, googleSignInOptions);
         mAuth = FirebaseAuth.getInstance();
@@ -70,6 +77,7 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
     }
 
     private void signIn() {
+        mProgressDialog.show();
         Intent signIntent = mGoogleSignInClient.getSignInIntent();
         startActivityForResult(signIntent, RC_SIGN_IN);
     }
@@ -107,7 +115,9 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
 //                            Log.d(TAG, "signInWithCredential:success");
-//                            FirebaseUser user = mAuth.getCurrentUser();
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            String username = user.getEmail();
+                            SavedSharedPreference.setPrefUsernameKey(getApplicationContext(), username);
 //                            updateUI(user);
                             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                             startActivity(intent);

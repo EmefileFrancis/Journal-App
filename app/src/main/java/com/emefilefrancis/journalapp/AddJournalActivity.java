@@ -8,9 +8,11 @@ import android.support.annotation.NonNull;
 
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -19,6 +21,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.RadioGroup;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 
@@ -64,18 +67,18 @@ public class AddJournalActivity extends AppCompatActivity {
 
     private AppDatabase mDb;
 
-    private FirebaseUser firebaseUser;
-    private DatabaseReference databaseReference;
-    private DatabaseReference journalReference;
+    private FirebaseUser mFirebaseUser;
+    private DatabaseReference mDatabaseReference;
+    private DatabaseReference mJournalReference;
 
 
-    private EditText etJournalTitle;
-    private EditText etJournalBody;
-    private CheckBox cbInspiration;
-    private CheckBox cbWork;
-    private CheckBox cbPersonal;
-    private RadioGroup rgColor;
-    private Button btnAdd;
+    private EditText mJournalTitle;
+    private EditText mJournalBody;
+    private CheckBox mInspiration;
+    private CheckBox mWork;
+    private CheckBox mPersonal;
+    private RadioGroup mColor;
+    private Button mBtnAdd;
 
     private int mJournalId = DEFAULT_JOURNAL_ID;
 
@@ -91,14 +94,14 @@ public class AddJournalActivity extends AppCompatActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        mDb = AppDatabase.getOnlyDBInstance(getApplicationContext());
+        mDb = AppDatabase.getsOnlyDBInstance(getApplicationContext());
 
 
-        databaseReference = FirebaseDatabase.getInstance().getReference();
-        journalReference = FirebaseDatabase.getInstance().getReference("journals");
+        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
+        mJournalReference = FirebaseDatabase.getInstance().getReference(getString(R.string.db_node_journal));
 
-        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-        Log.d(TAG, "firebaseUser: " + firebaseUser.getEmail());
+        mFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+
 
 
         Intent intent = getIntent();
@@ -123,39 +126,29 @@ public class AddJournalActivity extends AppCompatActivity {
     }
 
     public void disableEdit(){
-        etJournalTitle.setFocusable(false);
-        etJournalTitle.setClickable(true);
-        etJournalTitle.setFocusableInTouchMode(false);
-        etJournalBody.setFocusable(false);
-        etJournalBody.setFocusableInTouchMode(false);
-        etJournalBody.setClickable(true);
+        mJournalTitle.setFocusable(false);
+        mJournalTitle.setClickable(true);
+        mJournalTitle.setFocusableInTouchMode(false);
+        mJournalBody.setFocusable(false);
+        mJournalBody.setFocusableInTouchMode(false);
+        mJournalBody.setClickable(true);
     }
 
-    /*public void enableEdit(View view) {
-        Toast.makeText(this, "Clicked", Toast.LENGTH_LONG).show();
-        etJournalTitle.setFocusable(true);
-        etJournalTitle.setFocusableInTouchMode(true);
-        etJournalTitle.setClickable(true);
-        etJournalBody.setFocusable(true);
-        etJournalBody.setFocusableInTouchMode(true);
-        etJournalBody.setClickable(true);
-    }*/
-
     private void enableEditByPen(){
-        etJournalTitle.setFocusable(true);
-        etJournalTitle.setFocusableInTouchMode(true);
-        etJournalTitle.setClickable(true);
-        etJournalBody.setFocusable(true);
-        etJournalBody.setFocusableInTouchMode(true);
-        etJournalBody.setClickable(true);
+        mJournalTitle.setFocusable(true);
+        mJournalTitle.setFocusableInTouchMode(true);
+        mJournalTitle.setClickable(true);
+        mJournalBody.setFocusable(true);
+        mJournalBody.setFocusableInTouchMode(true);
+        mJournalBody.setClickable(true);
     }
 
     private void populateUI(JournalEntry journalEntry) {
         if(journalEntry == null){
             return;
         }
-        etJournalTitle.setText(journalEntry.getJournalTitle());
-        etJournalBody.setText(journalEntry.getJournalBody());
+        mJournalTitle.setText(journalEntry.getJournalTitle());
+        mJournalBody.setText(journalEntry.getJournalBody());
         String labelString = getLabelsStringFromDB(journalEntry);
         Log.i(TAG, "This is labelString: " + labelString);
         setLabelView(labelString);
@@ -166,28 +159,28 @@ public class AddJournalActivity extends AppCompatActivity {
 
         switch (journalColor){
             case ORANGE:
-                rgColor.check(R.id.radioButton1);
+                mColor.check(R.id.radioButton1);
                 break;
             case BLUE:
-                rgColor.check(R.id.radioButton2);
+                mColor.check(R.id.radioButton2);
                 break;
             case LEMON:
-                rgColor.check(R.id.radioButton3);
+                mColor.check(R.id.radioButton3);
                 break;
             case YELLOW:
-                rgColor.check(R.id.radioButton4);
+                mColor.check(R.id.radioButton4);
                 break;
             case PINK:
-                rgColor.check(R.id.radioButton5);
+                mColor.check(R.id.radioButton5);
                 break;
             case PURPLE:
-                rgColor.check(R.id.radioButton6);
+                mColor.check(R.id.radioButton6);
                 break;
             case DARK_BLUE:
-                rgColor.check(R.id.radioButton7);
+                mColor.check(R.id.radioButton7);
                 break;
             case LIGHT_BLUE:
-                rgColor.check(R.id.radioButton8);
+                mColor.check(R.id.radioButton8);
                 break;
             case WHITE:
                 break;
@@ -196,14 +189,12 @@ public class AddJournalActivity extends AppCompatActivity {
     }
 
     private String getLabelsStringFromDB(JournalEntry journalEntry) {
-        String labelString = journalEntry.getJournalLabel();
-        return labelString;
+        return journalEntry.getJournalLabel();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu, menu);
         inflater.inflate(R.menu.edit_journal_menu, menu);
         return true;
     }
@@ -218,11 +209,8 @@ public class AddJournalActivity extends AppCompatActivity {
                 Toast.makeText(this, "Journal Saved", Toast.LENGTH_LONG).show();
                 saveToDB();
                 break;
-            case R.id.reminder_menu:
-                Toast.makeText(this, "Reminder Clicked", Toast.LENGTH_SHORT).show();
-                break;
             case R.id.edit_journal_menu:
-                Toast.makeText(this, "Edit Clicked", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "You can now edit", Toast.LENGTH_LONG).show();
                 enableEditByPen();
                 break;
         }
@@ -230,10 +218,7 @@ public class AddJournalActivity extends AppCompatActivity {
     }
 
     private boolean checkIfJournalBodyIsEmpty() {
-        if(etJournalBody.getText().toString().equals("")){
-            return true;
-        }
-        return false;
+        return mJournalBody.getText().toString().equals("");
     }
 
     @Override
@@ -249,33 +234,44 @@ public class AddJournalActivity extends AppCompatActivity {
     }
 
     private void initViews() {
-        etJournalTitle = findViewById(R.id.et_journal_title);
-        etJournalBody = findViewById(R.id.et_journal_body);
-        cbInspiration = findViewById(R.id.cb_inspiration);
-        cbWork = findViewById(R.id.cb_work);
-        cbPersonal = findViewById(R.id.cb_personal);
-        rgColor = findViewById(R.id.radio_group);
+        mJournalTitle = findViewById(R.id.et_journal_title);
+        mJournalBody = findViewById(R.id.et_journal_body);
+        mInspiration = findViewById(R.id.cb_inspiration);
+        mWork = findViewById(R.id.cb_work);
+        mPersonal = findViewById(R.id.cb_personal);
+        mColor = findViewById(R.id.radio_group);
     }
 
     public void saveToDB() {
-        String title = etJournalTitle.getText().toString();
-        String body = etJournalBody.getText().toString();
-        List<String> labels = getSelectedLabelsFromViews();
+        final String title = mJournalTitle.getText().toString();
+        final String body = mJournalBody.getText().toString();
+        final List<String> labels = getSelectedLabelsFromViews();
         Log.i(TAG, "labels: " + labels);
-        String color = getColorFromViews();
-        Date updatedDate = new Date();
+        final String color = getColorFromViews();
+        final Date updatedDate = new Date();
+        //String cloudId = updatedDate.toString() + mFirebaseUser.getDisplayName();
 
         final JournalEntry journalEntry = new JournalEntry(title, body, getLabelsString(labels), color, updatedDate);
-        AppExecutors.getOnlyExecInstance().getDiskIO().execute(new Runnable() {
+        AppExecutors.getsOnlyExecInstance().getDiskIO().execute(new Runnable() {
             @Override
             public void run() {
                 //add new Journal to the DB
                 if(mJournalId == DEFAULT_JOURNAL_ID){
-                    mDb.journalDao().insertJournal(journalEntry);
+                    long cloudId = mDb.journalDao().insertJournal(journalEntry);
+                    Log.i(TAG, "THIS IS cloudId " + cloudId);
+                    Journal journalForCloud = journalForCloud(mFirebaseUser.getEmail(),
+                            title, body, getLabelsString(labels), color, cloudId,
+                            updatedDate.toString());
+                    insertToCloud(journalForCloud);
                     Log.d(TAG, "Saved new journal to DB");
                 }else{
                     journalEntry.setId(mJournalId);
                     mDb.journalDao().updateJournal(journalEntry);
+                    int cloudId = journalEntry.getId();
+                    Journal cloudJournal = journalForCloud(mFirebaseUser.getEmail(),
+                            title, body, getLabelsString(labels), color, cloudId,
+                            updatedDate.toString());
+                    updateCloud(cloudJournal);
                     Log.d(TAG, "Updated a journal");
                 }
                 finish();
@@ -283,45 +279,32 @@ public class AddJournalActivity extends AppCompatActivity {
         });
 
         //Save to cloud
-        processCloudPersistence(journalEntry);
+
     }
 
-    private void processCloudPersistence(JournalEntry journalEntry){
-        if(mJournalId == DEFAULT_JOURNAL_ID){
-            String id = journalReference.push().getKey();
-            journalReference.child(id).setValue(
+    private void insertToCloud(Journal journal){
+            mJournalReference.child(String.valueOf(journal.getJournalCloudId())).setValue(
                     journalForCloud(
-                            firebaseUser.getEmail(),
-                            journalEntry.getJournalTitle(),
-                            journalEntry.getJournalBody(),
-                            journalEntry.getJournalLabel(),
-                            journalEntry.getJournalColor(),
-                            journalEntry.getUpdatedDate().toString()));
-        }else{
-            //journalReference.child()
-        }
+                            mFirebaseUser.getEmail(),
+                            journal.getJournalTitle(),
+                            journal.getJournalBody(),
+                            journal.getJournalLabel(),
+                            journal.getJournalColor(),
+                            journal.getJournalCloudId(),
+                            journal.getJournalDate().toString()));
 
-//        databaseReference.child("users").child(firebaseUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                User user = dataSnapshot.getValue(User.class);
-//
-//                if(user == null){
-//                    Log.e(TAG, "onDataChange: User data is null");
-//                    Toast.makeText(AddJournalActivity.this, "onDataChanged: User data is null!", Toast.LENGTH_LONG).show();
-//                    return;
-//                }
-//
-//                saveNewJournalToCloud(user.email, journalEntry.getJournalTitle(),
-//                        journalEntry.getJournalBody(),journalEntry.getJournalLabel(),
-//                        journalEntry.getJournalColor(), journalEntry.getUpdatedDate().toString());
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError databaseError) {
-//                Log.e(TAG, "onCancelled: Failed to read user!");
-//            }
-//        });
+    }
+
+    private void updateCloud(Journal journal){
+        mJournalReference.child(String.valueOf(journal.getJournalCloudId())).setValue(
+                journalForCloud(
+                        mFirebaseUser.getEmail(),
+                        journal.getJournalTitle(),
+                        journal.getJournalBody(),
+                        journal.getJournalLabel(),
+                        journal.getJournalColor(),
+                        journal.getJournalCloudId(),
+                        journal.getJournalDate().toString()));
     }
 
     private Journal journalForCloud(String author,
@@ -329,46 +312,45 @@ public class AddJournalActivity extends AppCompatActivity {
                                     String journalBody,
                                     String journalLabel,
                                     String journalColor,
+                                    long journalCloudId,
                                     String journalDate){
-        Journal journal = new Journal(author, journalTitle, journalBody, journalLabel, journalColor, journalDate);
-        return journal;
+        return new Journal(author, journalTitle, journalBody, journalLabel, journalColor, journalCloudId, journalDate);
     }
 
     public String getLabelsString(List<String> labels){
-        String labelsString = "";
+        StringBuilder labelsString = new StringBuilder();
         if(labels.size() == 1){
-            labelsString = labels.get(0);
-            return labelsString;
+            labelsString = new StringBuilder(labels.get(0));
+            return labelsString.toString();
         }else if(labels.size() == 0){
-            return labelsString;
+            return labelsString.toString();
         }else if(labels.size() > 1){
             for(int i=0; i<labels.size(); i++) {
-                labelsString = labelsString + "|" + labels.get(i);
+                labelsString.append("|").append(labels.get(i));
             }
         }
-        String newString = labelsString.substring(1);
-        return newString;
+        return labelsString.substring(1);
     }
 
 
     public List<String> getSelectedLabelsFromViews() {
         List<String> labels = new ArrayList<>();
 
-        if(cbInspiration.isChecked()){
+        if(mInspiration.isChecked()){
             labels.add(INSPIRATION);
         }
-        if(cbPersonal.isChecked()){
+        if(mPersonal.isChecked()){
             labels.add(PERSONAL);
         }
-        if(cbWork.isChecked()){
+        if(mWork.isChecked()){
             labels.add(WORK);
         }
         return labels;
     }
 
     public String getColorFromViews(){
-        String color = "";
-        int checkedId = rgColor.getCheckedRadioButtonId();
+        String color;
+        int checkedId = mColor.getCheckedRadioButtonId();
 
         switch(checkedId){
             case R.id.radioButton1:
@@ -410,16 +392,16 @@ public class AddJournalActivity extends AppCompatActivity {
             Log.i(TAG, "labelString contains |");
             String[] labels = labelString.split("\\|");
             Log.i(TAG, "This is labels array " + labels);
-            for(int i=0; i<labels.length; i++){
-                switch(labels[i]){
+            for (String label : labels) {
+                switch (label) {
                     case INSPIRATION:
-                        cbInspiration.setChecked(true);
+                        mInspiration.setChecked(true);
                         break;
                     case WORK:
-                        cbWork.setChecked(true);
+                        mWork.setChecked(true);
                         break;
                     case PERSONAL:
-                        cbPersonal.setChecked(true);
+                        mPersonal.setChecked(true);
                         break;
                 }
             }
@@ -427,16 +409,14 @@ public class AddJournalActivity extends AppCompatActivity {
         }
         switch (labelString){
             case INSPIRATION:
-                cbInspiration.setChecked(true);
+                mInspiration.setChecked(true);
                 break;
             case WORK:
-                cbWork.setChecked(true);
+                mWork.setChecked(true);
                 break;
             case PERSONAL:
-                cbPersonal.setChecked(true);
+                mPersonal.setChecked(true);
                 break;
         }
     }
-
-
 }

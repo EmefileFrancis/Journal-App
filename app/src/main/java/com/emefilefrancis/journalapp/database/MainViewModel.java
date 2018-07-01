@@ -15,14 +15,14 @@ import java.util.List;
 public class MainViewModel extends AndroidViewModel {
 
     private static final String TAG = MainViewModel.class.getSimpleName();
-    private LiveData<List<JournalEntry>> journals;
+    private LiveData<List<JournalEntry>> mJournals;
 
     public MainViewModel(@NonNull Application application) {
         super(application);
-        AppDatabase mDB = AppDatabase.getOnlyDBInstance(this.getApplication());
+        AppDatabase mDB = AppDatabase.getsOnlyDBInstance(this.getApplication());
         Log.d(TAG, "Actively retrieving from the database");
-        journals = mDB.journalDao().loadAllJournals();
+        mJournals = mDB.journalDao().loadAllJournals();
     }
 
-    public LiveData<List<JournalEntry>> getJournals() { return journals; }
+    public LiveData<List<JournalEntry>> getmJournals() { return mJournals; }
 }

@@ -20,6 +20,8 @@ import android.view.View;
 import com.emefilefrancis.journalapp.database.AppDatabase;
 import com.emefilefrancis.journalapp.database.JournalEntry;
 import com.emefilefrancis.journalapp.database.MainViewModel;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.List;
 
@@ -33,10 +35,18 @@ public class MainActivity extends AppCompatActivity implements JournalAdapter.It
 
     private AppDatabase mDB;
 
+    private DatabaseReference mJournalDatabase;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        if(!isSignedIn()){
+            Intent signInIntent = new Intent(MainActivity.this, SignInActivity.class);
+            startActivity(signInIntent);
+        }
+
 
         mRecycleView = findViewById(R.id.rv_journals);
         mRecycleView.setLayoutManager(new LinearLayoutManager(this));
@@ -46,6 +56,8 @@ public class MainActivity extends AppCompatActivity implements JournalAdapter.It
 
         DividerItemDecoration decoration = new DividerItemDecoration(getApplicationContext(), VERTICAL);
         mRecycleView.addItemDecoration(decoration);
+
+        mJournalDatabase = FirebaseDatabase.getInstance().getReference(getString(R.string.db_node_journal));
 
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
             @Override
@@ -57,14 +69,17 @@ public class MainActivity extends AppCompatActivity implements JournalAdapter.It
             @Override
             public void onSwiped(final RecyclerView.ViewHolder viewHolder, int swipeDir) {
                 // Here is where you'll implement swipe to delete
-                AppExecutors.getOnlyExecInstance().getDiskIO().execute(new Runnable() {
+                final int position = viewHolder.getAdapterPosition();
+                List<JournalEntry> journalEntries = mJournalAdapter.getJournalEntries();
+                final JournalEntry journalEntry = journalEntries.get(position);
+                AppExecutors.getsOnlyExecInstance().getDiskIO().execute(new Runnable() {
                     @Override
                     public void run() {
-                        int position = viewHolder.getAdapterPosition();
-                        List<JournalEntry> journalEntries = mJournalAdapter.getJournalEntries();
-                        mDB.journalDao().deleteJournal(journalEntries.get(position));
+                        mDB.journalDao().deleteJournal(journalEntry);
                     }
                 });
+
+                mJournalDatabase.child(String.valueOf(journalEntry.getId())).removeValue();
             }
         }).attachToRecyclerView(mRecycleView);
 
@@ -77,32 +92,29 @@ public class MainActivity extends AppCompatActivity implements JournalAdapter.It
                 startActivity(addJournalIntent);
             }
         });
-        mDB = AppDatabase.getOnlyDBInstance(getApplicationContext());
+        mDB = AppDatabase.getsOnlyDBInstance(getApplicationContext());
         setupViewModel();
+    }
+
+    private boolean isSignedIn(){
+
+        if(SavedSharedPreference.getPrefUsernameKey(MainActivity.this)
+                .equals(SavedSharedPreference.DEFAULT_PREF_USERNAME_KEY)){
+            return false;
+        }else{
+            return true;
+        }
     }
 
     private void setupViewModel() {
         MainViewModel mainViewModel = ViewModelProviders.of(this).get(MainViewModel.class);
-        mainViewModel.getJournals().observe(this, new Observer<List<JournalEntry>>() {
+        mainViewModel.getmJournals().observe(this, new Observer<List<JournalEntry>>() {
             @Override
             public void onChanged(@Nullable List<JournalEntry> journalEntries) {
                 Log.d(TAG, "Updating list from LiveData/ViewModel");
                 mJournalAdapter.setJournalEntries(journalEntries);
             }
         });
-//        AppExecutors.getOnlyExecInstance().getDiskIO().execute(new Runnable() {
-//            @Override
-//            public void run() {
-//                final List<JournalEntry> journalEntries = mDB.journalDao().loadAllJournals();
-//                runOnUiThread(new Runnable(){
-//
-//                    @Override
-//                    public void run() {
-//                        mJournalAdapter.setJournalEntries(journalEntries);
-//                    }
-//                });
-//            }
-//        });
     }
 
     @Override
@@ -112,21 +124,5 @@ public class MainActivity extends AppCompatActivity implements JournalAdapter.It
         startActivity(intent);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu, menu);
-        return true;
-    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        return super.onOptionsItemSelected(item);
-    }
-
-//    @Override
-//    protected void onResume() {
-//        super.onResume();
-//        retrieveJournalEntries();
-//    }
 }

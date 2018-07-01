@@ -13,7 +13,7 @@ import java.util.concurrent.Executors;
 
 public class AppExecutors {
     private static final Object LOCK = new Object();
-    private static AppExecutors onlyExecInstance;
+    private static AppExecutors sOnlyExecInstance;
     private final Executor diskIO;
     private final Executor mainThread;
     private final Executor networkIO;
@@ -24,14 +24,14 @@ public class AppExecutors {
         this.networkIO = networkIO;
     }
 
-    public static AppExecutors getOnlyExecInstance() {
-        if(onlyExecInstance == null){
+    public static AppExecutors getsOnlyExecInstance() {
+        if(sOnlyExecInstance == null){
             synchronized (LOCK){
-                onlyExecInstance = new AppExecutors(Executors.newSingleThreadExecutor(),
+                sOnlyExecInstance = new AppExecutors(Executors.newSingleThreadExecutor(),
                         Executors.newFixedThreadPool(3), new MainThreadExecutor());
             }
         }
-        return onlyExecInstance;
+        return sOnlyExecInstance;
     }
 
     public Executor getDiskIO() {

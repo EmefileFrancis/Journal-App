@@ -10,21 +10,21 @@ import android.content.Context;
 /**
  * Created by SP on 6/25/2018.
  */
-@Database(entities = {JournalEntry.class}, version = 1, exportSchema = false)
+@Database(entities = {JournalEntry.class}, version = 3, exportSchema = false)
 @TypeConverters(DateTypeConverter.class)
 public abstract class AppDatabase extends RoomDatabase {
     private static final Object LOCK = new Object();
     private static final String DATABASE_NAME = "journalsDB";
-    private static AppDatabase onlyDBInstance;
+    private static AppDatabase sOnlyDBInstance;
 
-    public static AppDatabase getOnlyDBInstance(Context context){
-        if(onlyDBInstance == null){
+    public static AppDatabase getsOnlyDBInstance(Context context){
+        if(sOnlyDBInstance == null){
             synchronized (LOCK){
-                onlyDBInstance = Room.databaseBuilder(context.getApplicationContext(),
-                        AppDatabase.class, AppDatabase.DATABASE_NAME).build();
+                sOnlyDBInstance = Room.databaseBuilder(context.getApplicationContext(),
+                        AppDatabase.class, AppDatabase.DATABASE_NAME).fallbackToDestructiveMigration().build();
             }
         }
-        return onlyDBInstance;
+        return sOnlyDBInstance;
     }
 
     public abstract JournalDao journalDao();

@@ -20,7 +20,7 @@ public interface JournalDao {
     LiveData<List<JournalEntry>> loadAllJournals();
 
     @Insert
-    void insertJournal(JournalEntry journalEntry);
+    long insertJournal(JournalEntry journalEntry);
 
     @Delete
     void deleteJournal(JournalEntry journalEntry);

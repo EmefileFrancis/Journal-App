@@ -27,6 +27,9 @@ public class JournalEntry {
     @ColumnInfo(name = "journal_color")
     private String journalColor;
 
+//    @ColumnInfo(name = "journal_cloud_id")
+//    private String journalCloudId;
+
     @ColumnInfo(name = "updated_date")
     private Date updatedDate;
 
@@ -36,6 +39,7 @@ public class JournalEntry {
         this.journalBody = journalBody;
         this.journalLabel = journalLabel;
         this.journalColor = journalColor;
+        //this.journalCloudId = journalCloudId;
         this.updatedDate = updatedDate;
     }
 
@@ -45,6 +49,7 @@ public class JournalEntry {
         this.journalBody = journalBody;
         this.journalLabel = journalLabel;
         this.journalColor = journalColor;
+        //this.journalCloudId = journalCloudId;
         this.updatedDate = updatedDate;
     }
 
@@ -95,4 +100,12 @@ public class JournalEntry {
     public void setUpdatedDate(Date updatedDate) {
         this.updatedDate = updatedDate;
     }
+
+//    public String getJournalCloudId() {
+//        return journalCloudId;
+//    }
+//
+//    public void setJournalCloudId(String journalCloudId) {
+//        this.journalCloudId = journalCloudId;
+//    }
 }

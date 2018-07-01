@@ -23,7 +23,7 @@ public class JournalAdapter extends RecyclerView.Adapter<JournalAdapter.JournalV
 
     private final ItemClickListener itemClickListener;
     private Context mContext;
-    private List<JournalEntry> journalEntries;
+    private List<JournalEntry> mJournalEntries;
 
 
     public JournalAdapter(Context context, ItemClickListener listener){
@@ -40,18 +40,18 @@ public class JournalAdapter extends RecyclerView.Adapter<JournalAdapter.JournalV
 
     @Override
     public void onBindViewHolder(@NonNull JournalViewHolder holder, int position) {
-        JournalEntry journalEntry = journalEntries.get(position);
+        JournalEntry journalEntry = mJournalEntries.get(position);
 
-        holder.tvJournalTitle.setText(journalEntry.getJournalTitle());
+        holder.mJournalTitle.setText(journalEntry.getJournalTitle());
         String journalBody = journalEntry.getJournalBody();
-        holder.tvJournalBodyPart.setText(getMaxDisplayJournalBody(journalBody));
-        holder.tvLabel.setText(journalEntry.getJournalLabel());
+        holder.mJournalBodyPart.setText(getMaxDisplayJournalBody(journalBody));
+        holder.mLabel.setText(journalEntry.getJournalLabel());
         int colorInt = getColorForColorCircle(journalEntry.getJournalColor());
-        holder.clViewholder.setBackgroundColor(colorInt);
+        holder.mViewholder.setBackgroundColor(colorInt);
     }
 
-    public String getMaxDisplayJournalBody(String journalBody){
-        String subJournalBody = "";
+    private String getMaxDisplayJournalBody(String journalBody){
+        String subJournalBody;
         if(journalBody.length() >= 500){
             subJournalBody = journalBody.substring(0, 450);
         }else{
@@ -62,16 +62,14 @@ public class JournalAdapter extends RecyclerView.Adapter<JournalAdapter.JournalV
 
     @Override
     public int getItemCount() {
-        if(journalEntries == null){
-            return 0;
-        }
-        return journalEntries.size();
+        if(mJournalEntries == null){ return 0; }
+        return mJournalEntries.size();
     }
 
-    public List<JournalEntry> getJournalEntries() { return journalEntries; }
+    public List<JournalEntry> getJournalEntries() { return mJournalEntries; }
 
     public void setJournalEntries(List<JournalEntry> journalEntries) {
-        this.journalEntries = journalEntries;
+        this.mJournalEntries = journalEntries;
         notifyDataSetChanged();
     }
 
@@ -82,24 +80,34 @@ public class JournalAdapter extends RecyclerView.Adapter<JournalAdapter.JournalV
     private int getColorForColorCircle(String color){
         int colorInt = 0;
 
-        if (color.equals("orange")) {
-            colorInt = ContextCompat.getColor(mContext, R.color.materialOrange);
-        } else if (color.equals("blue")) {
-            colorInt = ContextCompat.getColor(mContext, R.color.materialBlue);
-        } else if (color.equals("lemon")) {
-            colorInt = ContextCompat.getColor(mContext, R.color.materialLemon);
-        } else if (color.equals("yellow")) {
-            colorInt = ContextCompat.getColor(mContext, R.color.materialYellow);
-        } else if (color.equals("pink")) {
-            colorInt = ContextCompat.getColor(mContext, R.color.materialPink);
-        } else if (color.equals("purple")) {
-            colorInt = ContextCompat.getColor(mContext, R.color.materialPurple);
-        } else if (color.equals("dark_blue")) {
-            colorInt = ContextCompat.getColor(mContext, R.color.materialDarkBlue);
-        } else if (color.equals("light_blue")) {
-            colorInt = ContextCompat.getColor(mContext, R.color.materialLightBlue);
-        } else if (color.equals("white")) {
-            colorInt = ContextCompat.getColor(mContext, R.color.white);
+        switch (color) {
+            case "orange":
+                colorInt = ContextCompat.getColor(mContext, R.color.materialOrange);
+                break;
+            case "blue":
+                colorInt = ContextCompat.getColor(mContext, R.color.materialBlue);
+                break;
+            case "lemon":
+                colorInt = ContextCompat.getColor(mContext, R.color.materialLemon);
+                break;
+            case "yellow":
+                colorInt = ContextCompat.getColor(mContext, R.color.materialYellow);
+                break;
+            case "pink":
+                colorInt = ContextCompat.getColor(mContext, R.color.materialPink);
+                break;
+            case "purple":
+                colorInt = ContextCompat.getColor(mContext, R.color.materialPurple);
+                break;
+            case "dark_blue":
+                colorInt = ContextCompat.getColor(mContext, R.color.materialDarkBlue);
+                break;
+            case "light_blue":
+                colorInt = ContextCompat.getColor(mContext, R.color.materialLightBlue);
+                break;
+            case "white":
+                colorInt = ContextCompat.getColor(mContext, R.color.white);
+                break;
         }
 
 
@@ -108,25 +116,25 @@ public class JournalAdapter extends RecyclerView.Adapter<JournalAdapter.JournalV
 
     class JournalViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
-        ConstraintLayout clViewholder;
-        TextView tvJournalTitle;
-        TextView tvJournalBodyPart;
-        TextView tvLabel;
+        ConstraintLayout mViewholder;
+        TextView mJournalTitle;
+        TextView mJournalBodyPart;
+        TextView mLabel;
 
 
         public JournalViewHolder(View itemView) {
             super(itemView);
 
-            clViewholder = itemView.findViewById(R.id.vh_constraint_layout);
-            tvJournalTitle = itemView.findViewById(R.id.tv_journal_title);
-            tvJournalBodyPart = itemView.findViewById(R.id.tv_journal_body_part);
-            tvLabel = itemView.findViewById(R.id.label_text);
+            mViewholder = itemView.findViewById(R.id.vh_constraint_layout);
+            mJournalTitle = itemView.findViewById(R.id.tv_journal_title);
+            mJournalBodyPart = itemView.findViewById(R.id.tv_journal_body_part);
+            mLabel = itemView.findViewById(R.id.label_text);
             itemView.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View v) {
-            int journalId = journalEntries.get(getAdapterPosition()).getId();
+            int journalId = mJournalEntries.get(getAdapterPosition()).getId();
             itemClickListener.onItemClickListener(journalId);
         }
     }

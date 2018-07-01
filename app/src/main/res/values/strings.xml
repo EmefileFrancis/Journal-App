@@ -17,4 +17,18 @@
     <string name="sign_in">Sign in</string>
     <string name="reminder">Reminder</string>
     <string name="edit">Edit</string>
+    <string name="sign_in_pb_title">Signing in with Google</string>
+    <string name="sign_in_pb_msg">Loading…</string>
+    <string name="db_node_journal">Journal</string>
+    <string name="remind_me_label">Remind later in</string>
+    <string name="remind_me_button_text">Remind me</string>
+    <string-array name="remind_me_minutes">
+        <item>5</item>
+        <item>10</item>
+        <item>15</item>
+        <item>20</item>
+        <item>25</item>
+        <item>30</item>
+    </string-array>
+    <string name="logo_description">This is the app\'s logo</string>
 </resources>
